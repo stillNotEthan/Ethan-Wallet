@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		E87723992F6AF579008F0C3A /* WalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = E87723982F6AF579008F0C3A /* WalletCore */; };
+		E877239B2F6AF586008F0C3A /* WalletCoreSwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = E877239A2F6AF586008F0C3A /* WalletCoreSwiftProtobuf */; };
+		E877239D2F6AFA08008F0C3A /* web3.swift in Frameworks */ = {isa = PBXBuildFile; productRef = E877239C2F6AFA08008F0C3A /* web3.swift */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		E87723752F6AED41008F0C3A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -29,9 +35,22 @@
 		E877237E2F6AED41008F0C3A /* EthanWalletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EthanWalletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		E877239F2F6AFF2F008F0C3A /* Exceptions for "EthanWallet" folder in "EthanWallet" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = E87723632F6AED40008F0C3A /* EthanWallet */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		E87723662F6AED40008F0C3A /* EthanWallet */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				E877239F2F6AFF2F008F0C3A /* Exceptions for "EthanWallet" folder in "EthanWallet" target */,
+			);
 			path = EthanWallet;
 			sourceTree = "<group>";
 		};
@@ -45,6 +64,16 @@
 			path = EthanWalletUITests;
 			sourceTree = "<group>";
 		};
+		E87723A12F6C44D8008F0C3A /* utils */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = utils;
+			sourceTree = "<group>";
+		};
+		E87723A52F6C4684008F0C3A /* service */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = service;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,6 +81,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E87723992F6AF579008F0C3A /* WalletCore in Frameworks */,
+				E877239D2F6AFA08008F0C3A /* web3.swift in Frameworks */,
+				E877239B2F6AF586008F0C3A /* WalletCoreSwiftProtobuf in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +107,12 @@
 		E877235B2F6AED40008F0C3A = {
 			isa = PBXGroup;
 			children = (
+				E87723A52F6C4684008F0C3A /* service */,
+				E87723A12F6C44D8008F0C3A /* utils */,
 				E87723662F6AED40008F0C3A /* EthanWallet */,
 				E87723772F6AED41008F0C3A /* EthanWalletTests */,
 				E87723812F6AED41008F0C3A /* EthanWalletUITests */,
+				E87723972F6AF579008F0C3A /* Frameworks */,
 				E87723652F6AED40008F0C3A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +125,13 @@
 				E877237E2F6AED41008F0C3A /* EthanWalletUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E87723972F6AF579008F0C3A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -109,9 +151,14 @@
 			);
 			fileSystemSynchronizedGroups = (
 				E87723662F6AED40008F0C3A /* EthanWallet */,
+				E87723A12F6C44D8008F0C3A /* utils */,
+				E87723A52F6C4684008F0C3A /* service */,
 			);
 			name = EthanWallet;
 			packageProductDependencies = (
+				E87723982F6AF579008F0C3A /* WalletCore */,
+				E877239A2F6AF586008F0C3A /* WalletCoreSwiftProtobuf */,
+				E877239C2F6AFA08008F0C3A /* web3.swift */,
 			);
 			productName = EthanWallet;
 			productReference = E87723642F6AED40008F0C3A /* EthanWallet.app */;
@@ -195,6 +242,10 @@
 			);
 			mainGroup = E877235B2F6AED40008F0C3A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				E87723942F6AF1F7008F0C3A /* XCRemoteSwiftPackageReference "wallet-core" */,
+				E87723962F6AF4FF008F0C3A /* XCRemoteSwiftPackageReference "web3.swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E87723652F6AED40008F0C3A /* Products */;
 			projectDirPath = "";
@@ -398,6 +449,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"EthanWallet/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EthanWallet/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -426,6 +479,8 @@
 				DEVELOPMENT_ASSET_PATHS = "\"EthanWallet/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = EthanWallet/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -552,6 +607,43 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E87723942F6AF1F7008F0C3A /* XCRemoteSwiftPackageReference "wallet-core" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/trustwallet/wallet-core.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.0;
+			};
+		};
+		E87723962F6AF4FF008F0C3A /* XCRemoteSwiftPackageReference "web3.swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/argentlabs/web3.swift.git";
+			requirement = {
+				kind = upToNextMinorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E87723982F6AF579008F0C3A /* WalletCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E87723942F6AF1F7008F0C3A /* XCRemoteSwiftPackageReference "wallet-core" */;
+			productName = WalletCore;
+		};
+		E877239A2F6AF586008F0C3A /* WalletCoreSwiftProtobuf */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E87723942F6AF1F7008F0C3A /* XCRemoteSwiftPackageReference "wallet-core" */;
+			productName = WalletCoreSwiftProtobuf;
+		};
+		E877239C2F6AFA08008F0C3A /* web3.swift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E87723962F6AF4FF008F0C3A /* XCRemoteSwiftPackageReference "web3.swift" */;
+			productName = web3.swift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E877235C2F6AED40008F0C3A /* Project object */;
 }
