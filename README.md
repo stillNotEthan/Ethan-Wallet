@@ -56,12 +56,6 @@ ETHERSCAN_API_KEY = YOUR_ETHERSCAN_KEY
 
 ---
 
-## 📸 界面预览 (Screenshots)
-
-*(建议在此处插入你的 App 截图，如首页、发送页、扫码页等)*
-
----
-
 ## 🛡️ 安全声明 (Security)
 
 本项目仅用于学习与演示。在生产环境中使用前，请务必：
