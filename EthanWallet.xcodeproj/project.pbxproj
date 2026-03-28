@@ -10,6 +10,7 @@
 		E87723992F6AF579008F0C3A /* WalletCore in Frameworks */ = {isa = PBXBuildFile; productRef = E87723982F6AF579008F0C3A /* WalletCore */; };
 		E877239B2F6AF586008F0C3A /* WalletCoreSwiftProtobuf in Frameworks */ = {isa = PBXBuildFile; productRef = E877239A2F6AF586008F0C3A /* WalletCoreSwiftProtobuf */; };
 		E877239D2F6AFA08008F0C3A /* web3.swift in Frameworks */ = {isa = PBXBuildFile; productRef = E877239C2F6AFA08008F0C3A /* web3.swift */; };
+		E87723BC2F7032D1008F0C3A /* Secrets.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = E87723BB2F7032BB008F0C3A /* Secrets.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +34,9 @@
 		E87723642F6AED40008F0C3A /* EthanWallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EthanWallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E87723742F6AED41008F0C3A /* EthanWalletTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EthanWalletTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E877237E2F6AED41008F0C3A /* EthanWalletUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EthanWalletUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E87723BB2F7032BB008F0C3A /* Secrets.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Secrets.xcconfig; sourceTree = "<group>"; };
+		E87723C62F7197BC008F0C3A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = Localizable.strings; sourceTree = "<group>"; };
+		E87723C82F7197D1008F0C3A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -74,6 +78,11 @@
 			path = service;
 			sourceTree = "<group>";
 		};
+		E87723B72F702A50008F0C3A /* model */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = model;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,6 +116,8 @@
 		E877235B2F6AED40008F0C3A = {
 			isa = PBXGroup;
 			children = (
+				E87723BB2F7032BB008F0C3A /* Secrets.xcconfig */,
+				E87723B72F702A50008F0C3A /* model */,
 				E87723A52F6C4684008F0C3A /* service */,
 				E87723A12F6C44D8008F0C3A /* utils */,
 				E87723662F6AED40008F0C3A /* EthanWallet */,
@@ -114,6 +125,8 @@
 				E87723812F6AED41008F0C3A /* EthanWalletUITests */,
 				E87723972F6AF579008F0C3A /* Frameworks */,
 				E87723652F6AED40008F0C3A /* Products */,
+				E87723C32F7197AE008F0C3A /* en.lproj */,
+				E87723C42F7197AE008F0C3A /* zh-Hans.lproj */,
 			);
 			sourceTree = "<group>";
 		};
@@ -132,6 +145,22 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		E87723C32F7197AE008F0C3A /* en.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				E87723C52F7197BC008F0C3A /* Localizable.strings */,
+			);
+			path = en.lproj;
+			sourceTree = "<group>";
+		};
+		E87723C42F7197AE008F0C3A /* zh-Hans.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				E87723C72F7197D1008F0C3A /* Localizable.strings */,
+			);
+			path = "zh-Hans.lproj";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -153,6 +182,7 @@
 				E87723662F6AED40008F0C3A /* EthanWallet */,
 				E87723A12F6C44D8008F0C3A /* utils */,
 				E87723A52F6C4684008F0C3A /* service */,
+				E87723B72F702A50008F0C3A /* model */,
 			);
 			name = EthanWallet;
 			packageProductDependencies = (
@@ -239,6 +269,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"zh-Hans",
 			);
 			mainGroup = E877235B2F6AED40008F0C3A;
 			minimizedProjectReferenceProxies = 1;
@@ -263,6 +294,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E87723BC2F7032D1008F0C3A /* Secrets.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -319,9 +351,29 @@
 		};
 /* End PBXTargetDependency section */
 
+/* Begin PBXVariantGroup section */
+		E87723C52F7197BC008F0C3A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E87723C62F7197BC008F0C3A /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		E87723C72F7197D1008F0C3A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E87723C82F7197D1008F0C3A /* zh-Hans */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		E87723862F6AED41008F0C3A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E87723BB2F7032BB008F0C3A /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -385,6 +437,7 @@
 		};
 		E87723872F6AED41008F0C3A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E87723BB2F7032BB008F0C3A /* Secrets.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -451,9 +504,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EthanWallet/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to scan QR codes for wallet addresses.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your wallet and authorize transactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -481,9 +535,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = EthanWallet/Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We need camera access to scan QR codes for wallet addresses.";
+				INFOPLIST_KEY_NSFaceIDUsageDescription = "We use Face ID to secure your wallet and authorize transactions.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

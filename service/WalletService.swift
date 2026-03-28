@@ -9,22 +9,32 @@ import Foundation
 import WalletCore
 import web3
 import SwiftProtobuf
+import BigInt
 
 class WalletService {
     static let shared = WalletService()
     private let serviceName = "com.ethan.ethanwallet"
     private let accountName = "mnemonic"
     
+    var rpcURL: String {
+        return Bundle.main.object(forInfoDictionaryKey: "RPC_URL") as? String ?? ""
+    }
+    
+    
     // 保存助记词到Keychain
     func saveMnemonic(_ mnemonic: String) {
         if let data = mnemonic.data(using: .utf8) {
-            KeychainHelper.shared.save(data, service: serviceName, account: accountName)
+            KeychainHelper.shared
+                .save(data, service: serviceName, account: accountName)
         }
     }
     
     // 从Keychain读取助记词
     func loadMnemonic() -> String? {
-        if let data = KeychainHelper.shared.read(service: serviceName, account: accountName) {
+        if let data = KeychainHelper.shared.read(
+            service: serviceName,
+            account: accountName
+        ) {
             return String(data: data, encoding: .utf8)
         }
         return nil
@@ -51,7 +61,7 @@ class WalletService {
         return address
     }
     
-    func getBalance(address: String, completion: @escaping (String) -> Void) {
+    static func getBalance(address: String, completion: @escaping (String) -> Void) {
         // 1. 确保地址是 0x 开头的 42 位字符串
         var formattedAddress = address
         if !formattedAddress.hasPrefix("0x") {
@@ -59,7 +69,10 @@ class WalletService {
         }
         
         // 2. 使用更稳定的公共节点 (Ankr 节点对格式要求相对宽松)
-        guard let url = URL(string: "https://eth-mainnet.g.alchemy.com/v2/3XrHH2lCoF9umUMpF4uZ_" ) else { return }
+        let urlString = WalletService.shared.rpcURL
+        guard let url = URL(string: urlString ) else {
+            return
+        }
         
         // 3. 严格按照以太坊 JSON-RPC 规范构造请求体
         let requestBody: [String: Any] = [
@@ -71,21 +84,30 @@ class WalletService {
         
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type" )
+        request
+            .setValue("application/json", forHTTPHeaderField: "Content-Type" )
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         
         do {
-            request.httpBody = try JSONSerialization.data(withJSONObject: requestBody, options: [] )
+            request.httpBody = try JSONSerialization
+                .data(withJSONObject: requestBody, options: [] )
         } catch {
             completion("Error: Request Encoding Failed")
             return
         }
         
-        print("🚀 Requesting balance for: \(formattedAddress) via \(url.absoluteString)")
+        print(
+            "🚀 Requesting balance for: \(formattedAddress) via \(url.absoluteString)"
+        )
         
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) {
+            data,
+            response,
+            error in
             if let error = error {
-                DispatchQueue.main.async { completion("Error: \(error.localizedDescription)") }
+                DispatchQueue.main.async {
+                    completion("Error: \(error.localizedDescription)")
+                }
                 return
             }
             
@@ -102,7 +124,10 @@ class WalletService {
             if let result = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 if let hexBalance = result["result"] as? String {
                     // 成功获取到十六进制余额 (例如 "0x0" 或 "0x1bc16d674ec80000")
-                    let cleanHex = hexBalance.replacingOccurrences(of: "0x", with: "")
+                    let cleanHex = hexBalance.replacingOccurrences(
+                        of: "0x",
+                        with: ""
+                    )
                     
                     if cleanHex.isEmpty || cleanHex == "0" {
                         DispatchQueue.main.async { completion("0.0000 ETH") }
@@ -113,7 +138,9 @@ class WalletService {
                     var weiValue: UInt64 = 0
                     let scanner = Scanner(string: cleanHex)
                     if scanner.scanHexInt64(&weiValue) {
-                        let etherValue = Double(weiValue) / 1_000_000_000_000_000_000.0
+                        let etherValue = Double(
+                            weiValue
+                        ) / 1_000_000_000_000_000_000.0
                         DispatchQueue.main.async {
                             completion(String(format: "%.4f ETH", etherValue))
                         }
@@ -144,59 +171,53 @@ extension WalletService {
         return privateKey.data
     }
     
-    func signTransaction(mnemonic: String, toAddress: String, amountInEth: Double) -> String? {
+    func signTransaction(
+        to recipient: String,
+        amount: BigUInt,
+        nonce: BigUInt,
+        gasPrice: BigUInt,
+        gasLimit: BigUInt,
+        mnemonic: String
+    ) -> String? {
         // 获取私钥
-        guard let privateKeyData = getPrivateKeyByMnemonic(from: mnemonic) else {return nil}
-        
-        // 构造以太坊交易输入
-        var input = TW_Ethereum_Proto_SigningInput()
-        // 设置链 ID （以太坊主网是1）
-        input.chainID = Data([0x01])
-        // 设置Nonce
-        input.nonce = Data([0x00])
-        
-        // 设置Gas费用
-        input.gasPrice = Data(hexString: "04a817c800")!
-        input.gasLimit = Data(hexString: "5208")!
-        
-        // 设置收款地址
-        input.toAddress = toAddress
-        
-        // 设置转账金额
-        let weiAmount = UInt64(amountInEth * 1_000_000_000_000_000_000)
-        var transaction = TW_Ethereum_Proto_Transaction()
-        var transfer = TW_Ethereum_Proto_Transaction.Transfer()
-        
-        // 将金额转为大端序 Data
-        var bigEndianAmount = weiAmount.bigEndian
-        transfer.amount = Data(bytes: &bigEndianAmount, count: MemoryLayout.size(ofValue: bigEndianAmount))
-        
-        transaction.transfer = transfer
-        input.transaction = transaction
-        
-        // 设置私钥
-        input.privateKey = privateKeyData
-        
-        // 执行签名
-        do {
-            let inputData = try input.serializedData()
-            let outputData = AnySigner.nativeSign(data: inputData, coin: .ethereum)
-            let output = try TW_Ethereum_Proto_SigningOutput(serializedData: outputData)
-            
-            // 返回签名后的十六进制字符串
-            return output.encoded.hexString
-        } catch {
-            print("Signing Error: \(error)")
+        guard let privateKey = getPrivateKeyByMnemonic(from: mnemonic) else {
             return nil
         }
+        
+        let coin: CoinType = .ethereum
+        
+        let input = EthereumSigningInput.with {
+            $0.chainID = Data(hexString: "01")! // 以太坊主网 ID 为 1
+            $0.nonce = Data(nonce.serialize())
+            $0.gasPrice = Data(gasPrice.serialize())
+            $0.gasLimit = Data(gasLimit.serialize())
+            $0.toAddress = recipient
+            $0.transaction = EthereumTransaction.with {
+                $0.transfer = EthereumTransaction.Transfer.with {
+                    $0.amount = Data(amount.serialize())
+                }
+            }
+            $0.privateKey = privateKey
+        }
+        let output: EthereumSigningOutput = AnySigner.sign(input: input, coin: coin)
+        return output.encoded.hexString
+        
     }
     
-    func broadcastTransaction(signedHex: String, completion: @escaping (String) -> Void) {
-        guard let url = URL(string: "https://eth-mainnet.g.alchemy.com/v2/3XrHH2lCoF9umUMpF4uZ_") else { return }
+    static func broadcastTransaction(
+        signedHex: String,
+        completion: @escaping (String) -> Void
+    ) {
+        let urlString = WalletService.shared.rpcURL
+        guard let url = URL(string: urlString) else {
+            return
+        }
         
         // 构造eth_sendRawTransaction 请求
         // signedHex 必须以 0x开头
-        let formattedHex = signedHex.hasPrefix("0x") ? signedHex : "0x" + signedHex
+        let formattedHex = signedHex.hasPrefix(
+            "0x"
+        ) ? signedHex : "0x" + signedHex
         
         let json: [String: Any] = [
             "jsonrpc": "2.0",
@@ -213,15 +234,22 @@ extension WalletService {
         print("Broadcasting transaction...")
         
         // 发送请求
-        URLSession.shared.dataTask(with: request) { data, response, error in
+        URLSession.shared.dataTask(with: request) {
+            data,
+            response,
+            error in
             if let error = error {
-                DispatchQueue.main.async {completion("Network Error: \(error.localizedDescription)")}
+                DispatchQueue.main.async {
+                    completion("Network Error: \(error.localizedDescription)")
+                }
                 return
             }
             
             guard let data = data,
                   let result = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-                DispatchQueue.main.async{ completion("Error: Invalid Response") }
+                DispatchQueue.main.async{
+                    completion("Error: Invalid Response")
+                }
                 return
             }
             
@@ -235,4 +263,123 @@ extension WalletService {
             }
         }.resume()
     }
+    
+    // 获取当前网络的Gas价格 （单位：Wei）
+    static func fetchGasPrice() async throws -> BigUInt {
+        let urlString = WalletService.shared.rpcURL
+        print("current rpc: \(urlString)")
+        guard let url = URL(string: urlString) else {
+            throw NSError(domain: "Invalid URL", code: 0)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let payload: [String: Any] = [
+            "jsonrpc": "2.0",
+            "method": "eth_gasPrice",
+            "params": [],
+            "id": 1
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(
+            RPCResponse<String>.self,
+            from: data
+        )
+        
+        // 将十六进制转为BigUInt
+        return BigUInt(
+            response.result.replacingOccurrences(of: "0x", with: ""),
+            radix: 16
+        ) ?? 0
+    }
+    
+    
+    static func fetchNonce(for address: String) async throws -> BigUInt {
+        let urlString = WalletService.shared.rpcURL
+        guard let url = URL(string: urlString) else {
+            throw NSError(domain: "Invalid URL", code: 0)
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let payload: [String: Any] = [
+            "jsonrpc": "2.0",
+            "method": "eth_getTransactionCount",
+            "params": [address, "latest"],
+            "id": 1
+        ]
+        
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(RPCResponse<String>.self, from: data)
+        
+        // 将十六进制字符串转为 BigUInt
+        return BigUInt(response.result.replacingOccurrences(of: "0x", with: ""), radix: 16) ?? 0
+    }
+    
+    static func fetchTokenBalance(contractAddress: String, walletAddress: String, decimals: Int) async throws -> String {
+        let urlString = WalletService.shared.rpcURL
+        guard let url = URL(string: urlString) else { throw NSError(domain: "Invalid URL", code: 0) }
+        
+        // 构造balanceOf的Data
+        // balanceOf的方法选择器是0x70a08231
+        let methodID = "70a08231"
+        let paddedAddress = walletAddress.replacingOccurrences(of: "0x", with: "").paddingLeft(toLength: 64, withPad: "0")
+        let data = "0x" + methodID + paddedAddress
+        
+        let payload: [String: Any] = [
+            "jsonrpc": "2.0",
+            "method": "eth_call",
+            "params": [["to": contractAddress, "data": data], "latest"],
+            "id": 1
+        ]
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+        
+        let (responseData, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(RPCResponse<String>.self, from: responseData)
+        
+        // 解析返回的大数并转换精度
+        let rawBalance = BigUInt(response.result.replacingOccurrences(of: "0x", with: ""), radix: 16) ?? 0
+        let divisor = pow(10.0, Double(decimals))
+        let formattedBalance = Double(rawBalance) / divisor
+        return String(format: "%.2f", formattedBalance)
+    }
+    
+    static func fetchTransactionHistory(for address: String) async throws -> [Transaction] {
+        let apiKey = Bundle.main.object(forInfoDictionaryKey: "ETHERSCAN_API_KEY") as? String ?? ""
+        let urlString = "https://api.etherscan.io/api?module=account&action=txlist&address=\(address)&startblock=0&endblock=99999999&sort=desc&apikey=\(apiKey)"
+        guard let url = URL(string: urlString) else { throw NSError(domain: "Invalid URL", code: 0) }
+        let request = URLRequest(url: url);
+        let (data, _) = try await URLSession.shared.data(for: request)
+        let response = try JSONDecoder().decode(EtherscanResponse.self, from: data)
+        
+        return response.result
+    }
+}
+
+extension String {
+    func paddingLeft(toLength: Int, withPad character: String) -> String {
+        let newLength = self.count
+        if newLength < toLength {
+            return String(repeating: character, count: toLength - newLength) + self
+        } else {
+            return self
+        }
+    }
+}
+
+struct RPCResponse<T: Codable>: Codable {
+    let result: T
 }

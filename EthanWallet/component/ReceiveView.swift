@@ -22,7 +22,7 @@ struct ReceiveView: View {
                 // 1. 二维码卡片
                 ZStack {
                     RoundedRectangle(cornerRadius: 20)
-                        .fill(Color.white)
+                        .fill(Color("AppBackground"))
                         .shadow(color: .black.opacity(0.1), radius: 10)
                     
                     if let qrImage = generateQRCode(from: address) {
